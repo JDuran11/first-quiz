@@ -1,0 +1,314 @@
+diff --git a/part1/question1.py b/part1/question1.py
+index 5c99fdb..9fd02f2 100644
+--- a/part1/question1.py
++++ b/part1/question1.py
+@@ -14,22 +14,39 @@
+ # Read the test suite to know the values that these functions should return.
+ 
+ def get_city_temperature(city):
+-   if city == "Quito":
+-      return 22
+-   if city == "Sao Paulo":
+-      return 17
+-   if city == "San Francisco":
+-      return 16
++   # if city == "Quito":
++   #    return 22
++   # if city == "Sao Paulo":
++   #    return 17
++   # if city == "San Francisco":
++   #    return 16
++   cities_temperature = {
++      "Quito": 22,
++      "Sao Paulo": 17,
++      "San Francisco": 16,
++      "New York": 14
++   }
++   return cities_temperature.get(city)
+ 
+ def get_city_weather(city):
+ 
+-  sky_condition = None
++#   sky_condition = None
+ 
+-  if city == "Sao Paulo":
+-     sky_condition = "cloudy"
+-  elif city == "New York":
+-     sky_condition = "rainy"
++#   if city == "Sao Paulo":
++#      sky_condition = "cloudy"
++#   elif city == "New York":
++#      sky_condition = "rainy"
+ 
+-  temperature = get_city_temperature(city)
+-
+-  return str(temperature) + " degrees and " + sky_condition
+\ No newline at end of file
++   day_state = {
++      "Quito" : "sunny",
++      "Sao Paulo" : "cloudy",
++      "San Francisco" : "cloudy",
++      "New York" : "rainy" 
++   }
++   
++   day_state = day_state.get(city)
++   
++   return str(get_city_temperature(city)) + " degrees and " + day_state
++  
++  
++#print(get_city_weather("New York"))
+\ No newline at end of file
+diff --git a/part1/question2.py b/part1/question2.py
+index 34a9b01..bfbef56 100644
+--- a/part1/question2.py
++++ b/part1/question2.py
+@@ -14,8 +14,12 @@
+ # Assign the function to `swapper` so that the function `run_swapper(..)` can use
+ # it. As always, there is a test suite that checks the result. It is in 
+ # `question2_test.py.`
++def swapper(tupla):
++  return(tupla[1], tupla[0])
++
+ 
+-swapper = None
+ 
+ def run_swapper(list_of_tuples):
+-  return list(map(swapper, list_of_tuples))
+\ No newline at end of file
++  return list(map(swapper, list_of_tuples))
++
++print(run_swapper([ ("foo", "bar"), ("c", "d"), ("e", "f") ]))
+\ No newline at end of file
+diff --git a/part1/question3.py b/part1/question3.py
+index 04fab99..0b63c42 100644
+--- a/part1/question3.py
++++ b/part1/question3.py
+@@ -21,24 +21,99 @@
+ #
+ # You will need to change the `make_oven()` function to return a new instance
+ # of your oven.
+-#
++
+ # The `alchemy_combine()` function will use your oven. You can see the expected 
+ # formulas and their outputs in the test file, `question3_test.py`.
+ 
+ # This function should return an oven instance!
++
++
++combination_elements = [
++    
++    {   "combinacion": ["lead", "mercury"],
++        "estados": {"boil": ["hot lead and mercury", "gold"],
++                    "freeze": ["cold lead and mercury","frozen lead and mercury"],
++                    "room temperature": "lead and mercury"}
++    },
++    {
++        "combinacion": ["water", "air"],
++        "estados": {"boil": ["warm water", "steam"],
++                    "freeze": ["cold water", "snow"],
++                    "room temperature": "water" }
++    },
++    {
++        "combinacion": ["cheese", "dough", "tomato"],
++        "estados": {"boil": ["pizza", "borned pizza"],
++                    "freeze": ["cold cheese, dough and tomato", "frozen cheese, dough and tomato"],
++                    "room temperature": "cheese, dough and tomato" }
++    }
++]
++
++
++
++class Oven:
++    def __init__(self):
++        self.ingredients = []
++        self.output = None
++
++    def add(self, item):
++        self.ingredients.append(item)
++
++    def freeze(self, temperature):
++        
++        for diccionario in combination_elements:
++            
++            if self.ingredients == diccionario["combinacion"]:
++
++                if temperature >= -5:
++                    self.output = diccionario["estados"]["freeze"][0]
++                    return self.output
++                
++                self.output = diccionario["estados"]["freeze"][1]
++                return self.output
++                
++
++    def boil(self, temperature):
++        
++        for diccionario in combination_elements:
++            
++            if self.ingredients == diccionario["combinacion"]:
++
++                if temperature <= 1000:
++                    self.output = diccionario["estados"]["boil"][0]
++                    return self.output
++                
++                self.output = diccionario["estados"]["boil"][1]
++                return self.output
++  
++
++    def wait(self):
++        
++        for diccionario in combination_elements:
++            
++            if self.ingredients == diccionario["combinacion"]:
++
++                self.output = diccionario["estados"]["room temperature"]
++                return self.output
++
++    def get_output(self):
++        return self.output
++
++
+ def make_oven():
+-  None
++    return Oven()
++
++
+ 
+ def alchemy_combine(oven, ingredients, temperature):
+-  
+-  for item in ingredients:
+-    oven.add(item)
++    for item in ingredients:
++        oven.add(item)
+ 
+-  if temperature < 0:
+-    oven.freeze()
+-  elif temperature >= 100:
+-    oven.boil()
+-  else:
+-    oven.wait()
++    if temperature < 0:
++        oven.freeze(temperature)
++    elif temperature >= 100:
++        oven.boil(temperature)
++    else:
++        oven.wait()
+ 
+-  return oven.get_output()
+\ No newline at end of file
++    return oven.get_output()
+\ No newline at end of file
+diff --git a/part1/question3_test.py b/part1/question3_test.py
+index 6cb6c89..fdaaad1 100644
+--- a/part1/question3_test.py
++++ b/part1/question3_test.py
+@@ -1,3 +1,5 @@
++from question3 import *
++
+ def test_alchemy_combine():
+ 
+   assert alchemy_combine(
+diff --git a/part1/question4.py b/part1/question4.py
+index 1e1b2bf..62fe898 100644
+--- a/part1/question4.py
++++ b/part1/question4.py
+@@ -24,7 +24,10 @@ import pets_db
+ 
+ sql_pets_owned_by_nobody = """
+ 
+-Your SQL here.
++SELECT pet.name, pet.species, pet.age
++FROM animals pet
++LEFT JOIN people_animals own ON pet.animal_id = own.pet_id
++WHERE own.owner_id IS NULL;
+ 
+ """
+ 
+@@ -34,7 +37,11 @@ Your SQL here.
+ 
+ sql_pets_older_than_owner = """
+ 
+-Your SQL here.
++SELECT COUNT(*)
++FROM animals pet
++JOIN people_animals own ON pet.animal_id = own.pet_id
++JOIN people per ON own.owner_id = per.person_id
++WHERE pet.age > per.age;
+ 
+ """
+ 
+@@ -43,6 +50,13 @@ Your SQL here.
+ # The output should be a list of tuples in the format: (<person name>, <pet name>, <species>)
+ sql_only_owned_by_bessie = """ 
+ 
+-Your SQL here.
++SELECT p.name, a.name, a.species
++FROM animals a
++JOIN people_animals pa ON a.animal_id = pa.pet_id
++JOIN people p ON pa.owner_id = p.person_id
++WHERE p.name = 'bessie' and (SELECT COUNT(*) AS num_owners
++                             FROM animals pet
++                             INNER JOIN people_animals pa ON pet.animal_id = pa.pet_id
++                             WHERE pa.pet_id = a.animal_id ) = 1;
+ 
+-"""
+\ No newline at end of file
++"""
+diff --git a/part1/question5.py b/part1/question5.py
+index f76654f..750fac6 100644
+--- a/part1/question5.py
++++ b/part1/question5.py
+@@ -20,7 +20,12 @@
+ 
+ sql_create_favorite_foods = """
+ 
+-Your SQL here.
++CREATE TABLE favorite_foods (
++  food_id INTEGER,
++  name text NOT NULL,
++  vegetarian INTEGER
++);
++
+ 
+ """
+ 
+@@ -30,7 +35,12 @@ Your SQL here.
+ 
+ sql_alter_tables_with_favorite_food = """
+ 
+-Your SQL here.
++
++ALTER TABLE animals ADD COLUMN favorite_food_id integer;
++
++
++ALTER TABLE people ADD COLUMN favorite_food_id integer;
++
+ 
+ """
+ 
+@@ -40,6 +50,10 @@ Your SQL here.
+ 
+ sql_select_all_vegetarian_pets = """
+ 
+-Your SQL here.
++SELECT a.name AS pet_name, ff.name AS food_name
++FROM animals a
++JOIN favorite_foods ff ON a.favorite_food_id = ff.food_id
++WHERE ff.vegetarian = 1;
++
+ 
+ """
+\ No newline at end of file
+diff --git a/part2/src/main/java/org/velezreyes/quiz/question6/VendingMachineImpl.java b/part2/src/main/java/org/velezreyes/quiz/question6/VendingMachineImpl.java
+index 85742c4..ce49cfc 100644
+--- a/part2/src/main/java/org/velezreyes/quiz/question6/VendingMachineImpl.java
++++ b/part2/src/main/java/org/velezreyes/quiz/question6/VendingMachineImpl.java
+@@ -3,7 +3,7 @@ package org.velezreyes.quiz.question6;
+ public class VendingMachineImpl {
+ 
+   public static VendingMachine getInstance() {
+-    // Fix me!
+-    return null;
++    
++    return new VendingMachineDrinks();
+   }
+ }
